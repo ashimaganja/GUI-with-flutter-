@@ -14,9 +14,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Windowns Serial Port Demo',
       theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        ),
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+      ),
       home: const MyHomePage(title: 'Flutter Windowns Serial Port Demo'),
     );
   }
@@ -73,7 +73,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     DropdownButton(
-                       value: _serialPort,
+                      value: _serialPort,
                       items: portList.map((item) {
                         return DropdownMenuItem(
                             child: Text(
@@ -90,19 +90,50 @@ class _MyHomePageState extends State<MyHomePage> {
                     const SizedBox(
                       width: 50.0,
                     ),
-
                     OutlinedButton(
-                      child: Text("Select"),
+                      child: const Text("Select"),
                       onPressed: () {
                         if (_serialPort == null) {
                           return;
+                        } else {
+                          debugPrint("${_serialPort!
+                              .open(mode: SerialPortMode.readWrite)}");
+                       
+                          if (_serialPort!.isOpen) {
+                            debugPrint('${_serialPort!.name} opened!');
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Second()),
+                            );
+                          }
                         }
-                        
                       },
                     ),
                   ],
                 ))
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class Second extends StatelessWidget {
+  const Second({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Second Route'),
+      ),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Go back!'),
         ),
       ),
     );
