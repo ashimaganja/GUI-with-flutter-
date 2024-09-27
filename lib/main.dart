@@ -36,6 +36,7 @@ class _MyHomePageState extends State<MyHomePage> {
   SerialPort? _serialPort;
   List<Uint8List> receiveDataList = [];
   final textInputCtrl = TextEditingController();
+  String data = "";
 
   @override
   void initState() {
@@ -96,15 +97,17 @@ class _MyHomePageState extends State<MyHomePage> {
                         if (_serialPort == null) {
                           return;
                         } else {
-                          debugPrint("${_serialPort!
-                              .open(mode: SerialPortMode.readWrite)}");
-                       
+                          debugPrint(
+                              "${_serialPort!.open(mode: SerialPortMode.readWrite)}");
+
                           if (_serialPort!.isOpen) {
                             debugPrint('${_serialPort!.name} opened!');
+                            data = _serialPort!.name!;
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const Second()),
+                                  builder: (context) =>
+                                      Second(data: data, port: _serialPort!)),
                             );
                           }
                         }
@@ -119,21 +122,29 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-class Second extends StatelessWidget {
-  const Second({Key? key}) : super(key: key);
+class Second extends StatefulWidget {
+  final String data;
+  final SerialPort port;
+  Second({required this.data, required this.port});
+  @override
+  State<Second> createState() => _SecondState();
+}
 
+class _SecondState extends State<Second> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Second Route'),
+        title: Text(' Port: ${widget.data}'),
       ),
       body: Center(
         child: ElevatedButton(
           onPressed: () {
+            widget.port.close();
+            debugPrint("${widget.port.name} is closed");
             Navigator.pop(context);
           },
-          child: const Text('Go back!'),
+          child: const Text('Close and Go back!'),
         ),
       ),
     );
